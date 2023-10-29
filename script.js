@@ -1,21 +1,11 @@
 // Declare the chart dimensions and margins.
-const marginTop = 30; // the top margin, in pixels
-const marginRight = 30; // the right margin, in pixels
-const marginBottom = 30; // the bottom margin, in pixels
-const marginLeft = 30; // the left margin, in pixels
-const width = 960; // the outer width of the chart, in pixels
-const goldenRatio = 1.618033988749894;
-const height = width / goldenRatio;
+const width = window.innerWidth; // the outer width of the chart, in pixels
+const height = window.innerHeight;
 const apiKey = "L2RVpyHPSsvfTDaECnTmlpEnuqa5Fdns8So91S2P";
-
-const random = d3.randomUniform();
-
-const innerHeight = height - marginTop - marginBottom;
-const innerWidth = width - marginLeft - marginRight;
 
 const yScale = d3
   .scaleLinear()
-  .range([innerHeight - 4, 4])
+  .range([height - 4, 4])
   .domain([0, 1]);
 
 const area = d3
@@ -35,11 +25,11 @@ const svg = d3
 
 const g = svg
   .append("g")
-  .attr("transform", `translate(${marginLeft}, ${marginTop})`);
+  .attr("transform", `translate(0, 0)`);
 
 const lineScale = d3
   .scaleLinear()
-  .range([18, innerWidth - 18])
+  .range([18, width - 18])
   .domain([0, 1]);
 
 
@@ -53,7 +43,7 @@ async function fetchData() {
   let totalLines = 0;
 
     //Change the date to a 2 months ago
-    fromDate.setMonth(fromDate.getMonth() - 1);
+    fromDate.setMonth(fromDate.getMonth() - 2);
     //Remove time from the date
     const fromDateString = fromDate.toISOString().split("T")[0];
     //Build API url with the date as parameter
@@ -133,7 +123,7 @@ getColourScheme = (number) => {
     case 2:
       return d3.schemePurples[6][4];
     case 3:
-      return d3.schemeReds[6][4];;
+      return d3.schemeReds[6][4];
     case 4:
       return  d3.schemeGreens[6][4];
     case 5:
