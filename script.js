@@ -51,10 +51,9 @@ async function fetchData() {
   let fromDate = new Date(); 
   let totalLineData = [];
   let totalLines = 0;
-  for(let month = 3; month >= 1; --month) 
-  {
+
     //Change the date to a 2 months ago
-    fromDate.setMonth(fromDate.getMonth() - month);
+    fromDate.setMonth(fromDate.getMonth() - 1);
     //Remove time from the date
     const fromDateString = fromDate.toISOString().split("T")[0];
     //Build API url with the date as parameter
@@ -67,33 +66,53 @@ async function fetchData() {
           let near_earth_objects = Object.entries(data.near_earth_objects);
           //Iterate through the dates
           for (let element of near_earth_objects) {            
-            let lineData = [];
+            let diameterData = [];
+            let velocityData = [];
+            let missedDistanceData = [];
+            let magnitudeData = [];
             let yOffset = 0.5;
             element[1].forEach((nmo) => {
-              lineData.push({ 
-                x1: -nmo.estimated_diameter.kilometers.estimated_diameter_min*10, 
-                x2: nmo.estimated_diameter.kilometers.estimated_diameter_max*10, 
-                y: yOffset / near_earth_objects.length 
+
+              magnitudeData.push({ 
+                x1: -nmo.absolute_magnitude_h/10, 
+                x2: nmo.absolute_magnitude_h/10, 
+                y: yOffset / (near_earth_objects.length + 1)
               });
 
+              diameterData.push({ 
+                x1: -nmo.estimated_diameter.meters.estimated_diameter_min, 
+                x2: nmo.estimated_diameter.meters.estimated_diameter_max, 
+                y: yOffset / (near_earth_objects.length + 1)
+              });
                           
-              lineData.push({ 
+              velocityData.push({ 
                 x1: -nmo.close_approach_data[0].relative_velocity.kilometers_per_second, 
                 x2: nmo.close_approach_data[0].relative_velocity.kilometers_per_second, 
-                y: yOffset / near_earth_objects.length 
+                y: yOffset / (near_earth_objects.length + 1)
               });  
+
+              missedDistanceData.push({ 
+                x1: -nmo.close_approach_data[0].miss_distance.lunar, 
+                x2: nmo.close_approach_data[0].miss_distance.lunar, 
+                y: yOffset / (near_earth_objects.length + 1)
+              });  
+
               yOffset++
             });
       
-            totalLines++;
-            totalLineData.push(lineData);
+            totalLines+=4;
+
+            totalLineData.push(diameterData);
+            totalLineData.push(velocityData);
+            totalLineData.push(missedDistanceData);
+            totalLineData.push(magnitudeData);
           }
 
       })
       .catch((error) => {
         console.log(error);
       });      
-  }
+  
  
   for(let i = 0; i < totalLines; i++) 
   {
